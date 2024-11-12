@@ -1,3 +1,5 @@
+workspace = { members = ["browser_core"] }
+
 [package]
 name = "browser"
 version = "0.1.0"
