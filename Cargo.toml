@@ -1,11 +1,32 @@
 workspace = { members = ["browser_core", "net/wasabi"] }
 
 [package]
+authors = ["wyo"]
 name = "browser"
 version = "0.1.0"
 edition = "2021"
+default-run = "browser"
+
+
+# 条件付きコンパイル。
+# default = ["wasabi"] としているので、cargo build が cargo build --features wasabiと同じ挙動になる
+[features]
+default = ["wasabi"]
+# wasabi feature が指定されてる場合、net_wasabi と noli が依存関係になる。
+wasabi = ["dep:net_wasabi", "dep:noli"]
+
+# 実行ファイル名とエントリーポイントを指定
+[[bin]]
+name = "browser"
+path = "src/main.rs"
+# このバイナリはwasabi featureが設定されてる場合にのみビルドされる
+required-features = ["wasabi"]
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-noli = { git = "https://github.com/hikalium/wasabi.git", branch = "for_saba" }
+browser_core = { path = "./browser_core" }
+# optional = true を指定すると、その依存クレートはデフォルトでは含まれず、特定のフィーチャーを有効化した場合にのみビルドされます。
+net_wasabi = { path = "./net/wasabi", optional = true }
+noli = { git = "https://github.com/hikalium/wasabi.git", branch = "for_saba", optional = true }
