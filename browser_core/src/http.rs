@@ -51,9 +51,7 @@ impl httpResponse {
         }
         (headers, b)
       },
-      None => return Err(Error::Network(format!(
-        "invalid http response: {}", preprocessed_response
-      ))),
+      None => (Vec::new(), remaining),
     };
 
     let statuses: Vec<&str> = status_line.split(' ').collect();
