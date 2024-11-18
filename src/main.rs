@@ -9,12 +9,12 @@ use noli::prelude::*;
 
 fn main() -> u64 {
   let client = HttpClient::new();
-  match client.get("example.com".to_string(), 80, "/".to_string()) {
+  match client.get("host.test".to_string(), 8000, "/test.html".to_string()) {
     Ok(response) => {
-      println!("Response: {:?}", response);
+      println!("Response: {:#?}", response);
     },
     Err(e) => {
-      println!("Error: {:?}", e);
+      println!("Error: {:#?}", e);
     }
   }
 
