@@ -48,6 +48,7 @@ impl HttpClient {
     request.push_str("\n");
     request.push_str("Accept: text/html\n");
     request.push_str("Connection: close\n");
+    request.push_str("\n");
 
     let _bytes_written = match stream.write(request.as_bytes()) {
       Ok(bytes_written) => bytes_written,
