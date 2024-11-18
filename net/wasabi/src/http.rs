@@ -76,7 +76,5 @@ impl HttpClient {
         "Invalid received response: {:?}", e
       ))),
     }
-
-
   }
 }
