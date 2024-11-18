@@ -20,7 +20,7 @@ impl Header {
 }
 
 #[derive(Debug, Clone)]
-pub struct httpResponse {
+pub struct HttpResponse {
   version: String,
   status_code: u32,
   reason: String,
@@ -28,7 +28,7 @@ pub struct httpResponse {
   body: String,
 }
 
-impl httpResponse {
+impl HttpResponse {
   pub fn new(raw_response: String) -> Result<Self, Error> {
     let preprocessed_response = raw_response.trim_start().replace("\r\n", "\n");
 
@@ -101,7 +101,7 @@ mod tests {
   #[test]
   fn test_status_line_only() {
     let raw = "HTTP/1.1 200 OK\n\n".to_string();
-    let res = httpResponse::new(raw).expect("Failed to parse http response");
+    let res = HttpResponse::new(raw).expect("Failed to parse http response");
     assert_eq!(res.version(), "HTTP/1.1");
     assert_eq!(res.status_code(), 200);
     assert_eq!(res.reason(), "OK");
@@ -110,7 +110,7 @@ mod tests {
   #[test]
   fn test_one_header() {
     let raw = "HTTP/1.1 200 OK\nDate:xx xx xx\n\n".to_string();
-    let res = httpResponse::new(raw).expect("Failed to parse http response");
+    let res = HttpResponse::new(raw).expect("Failed to parse http response");
     assert_eq!(res.version(), "HTTP/1.1");
     assert_eq!(res.status_code(), 200);
     assert_eq!(res.reason(), "OK");
@@ -121,7 +121,7 @@ mod tests {
   #[test]
   fn test_two_headers_with_white_space(){
     let raw = "HTTP/1.1 200 OK\nDate:xx xx xx\nContent-Length: 42\n\n".to_string();
-    let res = httpResponse::new(raw).expect("Failed to parse http response");
+    let res = HttpResponse::new(raw).expect("Failed to parse http response");
     assert_eq!(res.version(), "HTTP/1.1");
     assert_eq!(res.status_code(), 200);
     assert_eq!(res.reason(), "OK");
@@ -132,7 +132,7 @@ mod tests {
   #[test]
   fn test_body(){
     let raw = "HTTP/1.1 200 OK\nDate:xx xx xx\nContent-Length: 42\n\nbody message".to_string();
-    let res = httpResponse::new(raw).expect("Failed to parse http response");
+    let res = HttpResponse::new(raw).expect("Failed to parse http response");
     assert_eq!(res.version(), "HTTP/1.1");
     assert_eq!(res.status_code(), 200);
     assert_eq!(res.reason(), "OK");
@@ -146,6 +146,6 @@ mod tests {
   #[test]
   fn test_invalid() {
     let raw = "HTTP/1.1 200 OK".to_string();
-    assert!(httpResponse::new(raw).is_err());
+    assert!(HttpResponse::new(raw).is_err());
   }
 }

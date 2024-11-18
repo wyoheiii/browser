@@ -3,7 +3,7 @@ use alloc::string::String;
 use alloc::string::ToString;
 use alloc::format;
 use browser_core::error::Error;
-use browser_core::http::httpResponse;
+use browser_core::http::HttpResponse;
 use noli::net::{lookup_host, SocketAddr, TcpStream};
 use alloc::vec::Vec;
 pub struct HttpClient {}
@@ -13,7 +13,7 @@ impl HttpClient {
     Self {}
   }
 
-  pub fn get(&self, host: String, port:u16, path: String) -> Result<httpResponse, Error> {
+  pub fn get(&self, host: String, port:u16, path: String) -> Result<HttpResponse, Error> {
     let ips = match lookup_host(&host) {
       Ok(ips) => ips,
       Err(e) => return Err(Error::Network(format!(
@@ -71,7 +71,7 @@ impl HttpClient {
     }
 
     match core::str::from_utf8(&received) {
-      Ok(response) => httpResponse::new(response.to_string()),
+      Ok(response) => HttpResponse::new(response.to_string()),
       Err(e) => Err(Error::Network(format!(
         "Invalid received response: {:?}", e
       ))),
