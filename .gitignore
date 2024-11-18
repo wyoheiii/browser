@@ -1,5 +1,6 @@
 ./build
 Makefile
+test.html
 # Added by cargo
 
 /target
