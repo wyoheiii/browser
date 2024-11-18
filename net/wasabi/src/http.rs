@@ -6,6 +6,7 @@ use browser_core::error::Error;
 use browser_core::http::HttpResponse;
 use noli::net::{lookup_host, SocketAddr, TcpStream};
 use alloc::vec::Vec;
+
 pub struct HttpClient {}
 
 impl HttpClient {
