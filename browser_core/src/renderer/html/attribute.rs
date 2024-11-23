@@ -15,7 +15,6 @@ impl Attribute {
       }
   }
 
-  //論理的凝集度になってるからadd_to_name, add_to_valueのほうがよさそう
   pub fn add_char(&mut self, c: char, is_name: bool) {
     if is_name {
       self.name.push(c);
