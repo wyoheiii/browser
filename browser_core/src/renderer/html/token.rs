@@ -82,10 +82,13 @@ impl Iterator for HtmlTokenizer {
         State::Data => {
           if c == '<' {
             self.state = State::TagOpen;
+            continue;
           }
+
           if self.is_eof() {
             return Some(HtmlToken::Eof);
           }
+
           return Some(HtmlToken::Char(c));
         }
 
@@ -94,12 +97,20 @@ impl Iterator for HtmlTokenizer {
             self.state = State::EndTagOpen;
             continue;
           }
+
           if c.is_ascii_alphabetic() {
             self.reconsume = true;
             self.state = State::TagName;
             self.create_tag(true);
             continue;
           }
+
+          if self.is_eof() {
+            return Some(HtmlToken::Eof);
+          }
+
+          self.reconsume = true;
+          self.state = State::Data;
         }
 
         State::EndTagOpen => {
@@ -127,6 +138,11 @@ impl Iterator for HtmlTokenizer {
           if c == '>' {
             self.state = State::Data;
             return self.take_latest_token();
+          }
+
+          if c.is_ascii_uppercase() {
+            self.append_tag_name(c.to_ascii_lowercase());
+            continue;
           }
 
           if self.is_eof() {
@@ -170,6 +186,7 @@ impl Iterator for HtmlTokenizer {
 
         State::AfterAttributeName => {
           if c == ' ' {
+            // 空白は無視する
             continue;
           }
 
@@ -180,6 +197,7 @@ impl Iterator for HtmlTokenizer {
 
           if c == '=' {
             self.state = State::BeforeAttributeValue;
+            continue;
           }
 
           if c == '>' {
@@ -249,6 +267,7 @@ impl Iterator for HtmlTokenizer {
 
           if c == '>' {
             self.state = State::Data;
+            return self.take_latest_token();
           }
 
           if self.is_eof() {
@@ -351,7 +370,6 @@ impl Iterator for HtmlTokenizer {
           self.state = State::TemporaryBuffer;
           self.buf = String::from("</".to_string()) + &self.buf;
           self.buf.push(c);
-          continue;
         }
 
         State::TemporaryBuffer => {
