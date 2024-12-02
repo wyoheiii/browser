@@ -520,7 +520,7 @@ impl HtmlTokenizer {
 #[cfg(test)]
 mod tests {
   use super::*;
-  use crate::{alloc::string::ToString, renderer::html};
+  use crate::alloc::string::ToString;
   use alloc::vec;
 
   #[test]
