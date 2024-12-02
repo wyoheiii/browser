@@ -514,3 +514,122 @@ impl HtmlTokenizer {
 
 
 }
+
+
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+  use crate::{alloc::string::ToString, renderer::html};
+  use alloc::vec;
+
+  #[test]
+  fn test_empty() {
+    let html = "".to_string();
+    let mut tokenizer = HtmlTokenizer::new(html);
+    assert!(tokenizer.next().is_none());
+  }
+
+  #[test]
+  fn test_start_and_end_tag() {
+    let html = "<body></body>".to_string();
+    let mut tokenizer = HtmlTokenizer::new(html);
+    let expected = [
+      HtmlToken::StartTag {
+        tag: "body".to_string(),
+        self_closing: false,
+        attributes: Vec::new()
+      },
+      HtmlToken::EndTag {
+        tag: "body".to_string()
+      },
+    ];
+    for e in expected {
+      assert_eq!(Some(e), tokenizer.next());
+    }
+  }
+
+  #[test]
+  fn test_attributes() {
+    let html = "<p class=\"A\" id='B' foo=bar></p>".to_string();
+    let mut tokenizer = HtmlTokenizer::new(html);
+    let mut atr1 = Attribute::new();
+    atr1.add_char('c', true);
+    atr1.add_char('l', true);
+    atr1.add_char('a', true);
+    atr1.add_char('s', true);
+    atr1.add_char('s', true);
+    atr1.add_char('A', false);
+
+    let mut attr2 = Attribute::new();
+    attr2.add_char('i', true);
+    attr2.add_char('d', true);
+    attr2.add_char('B', false);
+
+    let mut attr3 = Attribute::new();
+    attr3.add_char('f', true);
+    attr3.add_char('o', true);
+    attr3.add_char('o', true);
+    attr3.add_char('b', false);
+    attr3.add_char('a', false);
+    attr3.add_char('r', false);
+
+    let expected = [
+      HtmlToken::StartTag {
+        tag: "p".to_string(),
+        self_closing: false,
+        attributes: vec![atr1, attr2, attr3],
+      },
+      HtmlToken::EndTag {
+        tag: "p".to_string()
+      },
+    ];
+    for e in expected {
+      assert_eq!(Some(e), tokenizer.next());
+    }
+  }
+
+  #[test]
+  fn test_self_closing_tag() {
+    let html = "<img />".to_string();
+    let mut tokenizer = HtmlTokenizer::new(html);
+    let expected = [
+      HtmlToken::StartTag {
+        tag: "img".to_string(),
+        self_closing: true,
+        attributes: Vec::new(),
+      }
+    ];
+    for e in expected {
+      assert_eq!(Some(e), tokenizer.next());
+    }
+  }
+
+  #[test]
+  fn test_cript_tag() {
+    let html = "<script>js code;</script>".to_string();
+    let mut tokenizer = HtmlTokenizer::new(html);
+    let expected = [
+      HtmlToken::StartTag {
+        tag: "script".to_string(),
+        self_closing: false,
+        attributes: Vec::new(),
+      },
+      HtmlToken::Char('j'),
+      HtmlToken::Char('s'),
+      HtmlToken::Char(' '),
+      HtmlToken::Char('c'),
+      HtmlToken::Char('o'),
+      HtmlToken::Char('d'),
+      HtmlToken::Char('e'),
+      HtmlToken::Char(';'),
+      HtmlToken::EndTag {
+        tag: "script".to_string(),
+      }
+    ];
+
+    for e in expected {
+      assert_eq!(Some(e), tokenizer.next());
+    }
+  }
+}
