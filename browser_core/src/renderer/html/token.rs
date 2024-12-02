@@ -76,7 +76,10 @@ impl Iterator for HtmlTokenizer {
     }
 
     loop {
-      let c  = self.consume_next_input();
+      let c  = match self.reconsume {
+        true => self.reconsume_input(),
+        false => self.consume_next_input(),
+      };
 
       match self.state {
         State::Data => {
@@ -410,6 +413,11 @@ impl HtmlTokenizer {
     let c = self.input[self.pos];
     self.pos += 1;
     c
+  }
+
+  fn reconsume_input(&mut self)-> char {
+    self.reconsume = false;
+    self.input[self.pos - 1]
   }
 
   fn create_tag(&mut self, start_tag_token: bool) {
