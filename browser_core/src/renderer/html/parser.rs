@@ -222,6 +222,11 @@ impl HtmlParser {
                   token = self.t.next();
                   continue;
                 }
+                "a" => {
+                  self.insert_element(tag, attributes.to_vec());
+                  token = self.t.next();
+                  continue;
+                }
                 _ => {
                   token = self.t.next();
                 }
@@ -256,6 +261,13 @@ impl HtmlParser {
                   continue;
                 }
                 "h1" | "h2" => {
+                  let element_kind = ElementKind::from_str(tag)
+                    .expect("failed to convert string to ElementKind");
+                  token = self.t.next();
+                  self.pop_until(element_kind);
+                  continue;
+                }
+                "a" => {
                   let element_kind = ElementKind::from_str(tag)
                     .expect("failed to convert string to ElementKind");
                   token = self.t.next();
