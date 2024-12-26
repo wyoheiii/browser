@@ -20,8 +20,8 @@ pub enum ElementKind {
   Script,
   // https://html.spec.whatwg.org/multipage/sections.html#the-body-element
   Body,
-  // // https://html.spec.whatwg.org/multipage/grouping-content.html#the-p-element
-  // P,
+  // https://html.spec.whatwg.org/multipage/grouping-content.html#the-p-element
+  P,
   // // https://html.spec.whatwg.org/multipage/sections.html#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements
   // H1,
   // H2,
@@ -31,6 +31,7 @@ pub enum ElementKind {
 
 impl FromStr for ElementKind {
   type Err = String;
+
   fn from_str(s: &str) -> Result<Self, Self::Err> {
     match s {
       "html" => Ok(Self::Html),
@@ -38,6 +39,7 @@ impl FromStr for ElementKind {
       "style" => Ok(Self::Style),
       "script" => Ok(Self::Script),
       "body" => Ok(Self::Body),
+      "p" => Ok(Self::P),
       _ => Err(format!("unimplemented element name {:?}", s)),
     }
   }
