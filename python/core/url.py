@@ -75,11 +75,9 @@ class URL:
 
         request_headers = {
             "Host": self.host,
-            "Connection": "close",
-            "User-Agent": "omocha-browser/0.1"
         }
 
-        request = "GET {} HTTP/1.1\r\n".format(self.path)
+        request = "GET {} HTTP/1.0\r\n".format(self.path)
 
         for key, value in request_headers.items():
             request += "{}: {}\r\n".format(key, value)
@@ -109,37 +107,3 @@ class URL:
         s.close()
 
         return content
-
-
-def show(body):
-    in_tag = False
-
-    for c in body:
-        if c == "<":
-            in_tag = True
-        elif c == ">":
-            in_tag = False
-
-        elif not in_tag:
-            print(c, end="")
-
-def load(url):
-    body = url.request()
-
-    if url.is_view_source:
-        print(body)
-    else:
-      show(body)
-
-if __name__ == "__main__":
-    import sys
-    import os
-    # test if url is empty
-    if len(sys.argv) >= 2:
-        url = sys.argv[1]
-    else:
-        path = os.path.abspath("test.html")
-        url = "file://" + path
-
-    url = URL(url)
-    load(url)
